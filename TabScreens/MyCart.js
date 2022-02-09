@@ -36,7 +36,7 @@ const MyCart = ({ navigation }) => {
   useEffect(() => {
     fetchCart(url);
     window.removeEventListener('onPress', removeItem);
-  }, [removeItem]);
+  }, [navigation, cart]);
   console.log(cart);
   let totalvalue;
   if (!empty) {

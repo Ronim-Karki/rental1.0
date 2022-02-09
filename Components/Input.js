@@ -75,7 +75,7 @@ const Input = ({ navigation }) => {
     <View onPress={() => Keyboard.dismiss()}>
       <TextInput
         style={styles.textbox}
-        placeholder="User Name/Email"
+        placeholder="Email"
         defaultValue={email}
         onChangeText={(text) => setEmail(text)}
         textContentType="username"

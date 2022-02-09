@@ -242,7 +242,7 @@ const SignUp = ({ navigation }) => {
             </View>
             <TextInput
               style={styles.textbox}
-              placeholder="User Name"
+              placeholder="Username"
               onChangeText={(userName) => setUserName(userName)}
             />
             <TextInput

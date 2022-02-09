@@ -1,27 +1,48 @@
-import { StyleSheet, Text, View, ScrollView, Button } from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Button,
+  Modal,
+} from 'react-native';
+import React, { useState } from 'react';
 import { useGlobalContext } from '../Components/context';
+import { auth } from '../user/config';
 
 const ItemsPosted = () => {
   const { data } = useGlobalContext();
+  // const [modalVisible, setModalVisible] = useState(false);
   return (
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.text}>Post History</Text>
         <View>
           {data.map((item, index) => {
-            const { id, title, description, category, price } = item;
-            return (
-              <View style={styles.smallContainer}>
-                <View>
-                  <Text>Title : {title}</Text>
-                  <Text>Description : {description}</Text>
-                  <Text>Category : {category}</Text>
-                  <Text>Price : {price}</Text>
+            const { id, title, description, category, price, postedBy } = item;
+            if (postedBy === auth.currentUser.uid) {
+              return (
+                <View style={styles.smallContainer}>
+                  <View>
+                    <Text>Title : {title}</Text>
+                    <Text>Description : {description}</Text>
+                    <Text>Category : {category}</Text>
+                    <Text>Price : {price}</Text>
+                  </View>
+                  <Button title="Edit" />
+                  {/* <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                  >
+                    <Text>Title:{title}</Text>
+                    <Text>Title:{description}</Text>
+                    <Text>Title:{category}</Text>
+                    <Text>Title:{price}</Text>
+                  </Modal> */}
                 </View>
-                <Button title="Edit" />
-              </View>
-            );
+              );
+            }
           })}
         </View>
       </View>
