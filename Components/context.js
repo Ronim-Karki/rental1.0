@@ -8,6 +8,7 @@ const AppProvider = ({ children }) => {
   const [cart, setCart] = useState([{}]);
   const [empty, setisEmpty] = useState(true);
   const [count, setCount] = useState(1);
+  const [total, setTotal] = useState(0);
   //   const initialState = {
   //     cartItems: cart,
   //     total: 0,
@@ -46,6 +47,8 @@ const AppProvider = ({ children }) => {
         count,
         setCount,
         remove,
+        total,
+        setTotal,
       }}
     >
       {children}

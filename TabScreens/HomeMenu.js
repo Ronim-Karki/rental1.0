@@ -9,12 +9,20 @@ import {
   Image,
   Button,
   RefreshControl,
+  Pressable,
+  Modal,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useGlobalContext } from '../Components/context';
+import { dbR } from '../user/config';
+import { ref, set } from 'firebase/database';
+import { auth } from '../user/config';
 
-const HomeMenu = () => {
+const HomeMenu = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
+  const [added, setAdded] = useState(false);
+  const [buttonName, setButtonName] = useState('Add to Cart');
+  const [iconName, setIconName] = useState('staro');
   const {
     data,
     cart,
@@ -25,6 +33,7 @@ const HomeMenu = () => {
     count,
     setCount,
   } = useGlobalContext();
+
   const url =
     'https://rent-mate-91f5c-default-rtdb.firebaseio.com/products.json';
   const wait = (timeout) => {
@@ -37,6 +46,7 @@ const HomeMenu = () => {
   useEffect(() => {
     createProduct(url);
   }, [refreshing]);
+
   return (
     <ScrollView
       refreshControl={
@@ -56,35 +66,96 @@ const HomeMenu = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.box}>
-          {data.map((item) => {
+          {data.map((item, index) => {
             const addtoCart = () => {
-              const { id, title, imageUrl, price } = item;
+              console.log(item.id);
+              const { id, title, imageUrl, price, category, description } =
+                item;
+
+              console.log(id);
               if (empty) {
-                setCart([{ id, title, imageUrl, price }]);
+                setAdded(true);
                 setisEmpty(false);
+
+                // setCart([{ id, title, imageUrl, price }]);
+                set(ref(dbR, 'cart/' + id)),
+                  {
+                    title: title,
+                    imageUrl: imageUrl,
+                    price: price,
+                  };
               } else {
-                setCart([{ id, title, imageUrl, price }, ...cart]);
+                setAdded(true);
+                // setCart([{ id, title, imageUrl, price }, ...cart]);
+                set(ref(dbR, 'cart/' + id), {
+                  id: id,
+                  title: title,
+                  imageUrl: imageUrl,
+                  price: price,
+                });
               }
             };
-            console.log(item);
-            console.log(cart);
+
+            // console.log(item);
+            // console.log(cart);
+            // {
+            //   console.log(item.id);
+            // }
+            const singleOpen = () => {
+              navigation.navigate('SingleItem', {
+                itemImage: item.imageUrl,
+                itemTitle: item.title,
+                itemCategory: item.category,
+                itemDescription: item.description,
+                itemPrice: item.price,
+                itemID: item.id,
+              });
+              console.log(item.id);
+            };
+            const button = () => {
+              cart.map((ele) => {
+                if (ele.id !== item.id) {
+                  return true;
+                } else {
+                  return false;
+                }
+              });
+            };
+            const onPressIcon = () => {
+              // setIconName('star');
+              set(ref(dbR, 'favourite/' + item.id), {
+                id: item.id,
+                title: item.title,
+                imageUrl: item.imageUrl,
+                price: item.price,
+                userId: auth.currentUser.uid,
+              });
+            };
+
             return (
               <View key={item.id} style={{ marginBottom: 25, marginTop: 25 }}>
-                <Image
-                  style={styles.displayImage}
-                  source={{ uri: `${item.imageUrl}` }}
-                />
-                <View
-                  style={{
-                    justifyContent: 'space-between',
-                    maxWidth: 150,
-                  }}
-                >
-                  <Text style={styles.title}>Title: {item.category}</Text>
-                  <Text style={styles.title}>Price: AU {item.price}$</Text>
-                </View>
+                <Pressable onPress={singleOpen}>
+                  <Image
+                    style={styles.displayImage}
+                    source={{ uri: `${item.imageUrl}` }}
+                  />
+                  <View
+                    style={{
+                      justifyContent: 'space-between',
+                      maxWidth: 150,
+                    }}
+                  >
+                    <Text style={styles.title}>Title: {item.category}</Text>
+                    <Text style={styles.title}>Price: AU {item.price}$</Text>
+                  </View>
+                </Pressable>
+                <TouchableOpacity onPress={onPressIcon}>
+                  <AntDesign name={iconName} size={24} color="black" />
+                </TouchableOpacity>
+
                 <Button
-                  title="Add to Cart"
+                  title={'Add to cart'}
+                  disabled={false}
                   style={{ backgroundColor: 'grey' }}
                   onPress={addtoCart}
                 />

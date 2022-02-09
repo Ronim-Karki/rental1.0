@@ -22,7 +22,7 @@ const Account = ({ navigation }) => {
           { key: 'Profile' },
           { key: 'Rent History' },
           { key: 'Items Posted' },
-          { key: 'Facourite List' },
+          { key: 'Favourite List' },
           { key: 'Settings' },
           { key: 'Help' },
           { key: 'Terms of Service' },
@@ -35,6 +35,9 @@ const Account = ({ navigation }) => {
             }
             if (id == 2) {
               navigation.navigate('Items Posted');
+            }
+            if (id == 3) {
+              navigation.navigate('Favourite List');
             }
             if (id == 7) {
               auth.signOut().then(() => {

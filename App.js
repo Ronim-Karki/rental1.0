@@ -11,6 +11,9 @@ import TabView from './navigation/TabView';
 import { AppProvider } from './Components/context';
 import ItemsPosted from './ListViews/ItemsPosted';
 import Profile from './ListViews/Profile';
+import Checkout from './TabScreens/Checkout';
+import SingleItem from './TabScreens/SingleItem';
+import FavoriteList from './ListViews/FavoriteList';
 // const AppContainer = createAppContainer(Navigator);
 const Stack = createNativeStackNavigator();
 const App = () => {
@@ -24,6 +27,9 @@ const App = () => {
           <Stack.Screen name="Tab" component={TabView} />
           <Stack.Screen name="Items Posted" component={ItemsPosted} />
           <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="Checkout" component={Checkout} />
+          <Stack.Screen name="SingleItem" component={SingleItem} />
+          <Stack.Screen name="Favourite List" component={FavoriteList} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppProvider>

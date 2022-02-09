@@ -33,7 +33,7 @@ const Profile = () => {
           const { email, firstname, id, lastName, phone } = item;
           if (auth.currentUser.uid === id) {
             return (
-              <View>
+              <View key={id}>
                 <Text style={{ fontSize: 25 }}>Hello i am {firstname}</Text>
                 <Text style={{ fontSize: 25 }}>Email: {email}</Text>
                 <Text style={{ fontSize: 25 }}>phone: {phone}</Text>

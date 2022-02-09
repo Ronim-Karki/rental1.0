@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,46 +6,65 @@ import {
   ScrollView,
   Image,
   Pressable,
+  Button,
+  LogBox,
 } from 'react-native';
 import { useGlobalContext } from '../Components/context';
+import { dbR } from '../user/config';
+import { ref, set, update, remove } from 'firebase/database';
 import { AntDesign } from '@expo/vector-icons';
-const MyCart = () => {
-  const { cart, empty, count, setCount, setCart } = useGlobalContext();
-  const totalvalue = cart
-    .map((item) => {
-      const { price } = item;
-      const value = price.slice(0, price.length - 1);
-      console.log(value);
-      return price;
-    })
-    .reduce((total, value) => {
-      return total + value;
-    }, 0);
-  const addItem = (num) => {
-    cart.map((item) => {
-      if (item.id === num) {
-        return setCount(count + 1);
+
+const MyCart = ({ navigation }) => {
+  const { cart, empty, count, setCount, setCart, setIsEmpty, setTotal } =
+    useGlobalContext();
+  let url = 'https://rent-mate-91f5c-default-rtdb.firebaseio.com/cart.json';
+  const fetchCart = async (url) => {
+    try {
+      const response = await fetch(url);
+      const resData = await response.json();
+      const result = Object.values(resData);
+
+      if (result) {
+        setCart(result);
+      } else {
+        <Text> No items in the Cart</Text>;
       }
-    });
+    } catch (err) {
+      console.log(err);
+    }
   };
-  const decreaseItem = (num) => {
-    cart.map((item) => {
-      if (item.id === num) {
-        if (count > 1) {
-          return setCount(count - 1);
-        }
-      }
-    });
-  };
-  const removeItem = (id) => {
-    setCart(() => {
-      const filtered = cart.filter((item) => {
-        item.id !== id;
-      });
-      return filtered;
-    });
-  };
+  useEffect(() => {
+    fetchCart(url);
+    window.removeEventListener('onPress', removeItem);
+  }, [removeItem]);
   console.log(cart);
+  let totalvalue;
+  if (!empty) {
+    totalvalue = cart
+      .map((item) => {
+        const { price } = item;
+        const value = price;
+        console.log(value);
+        return value;
+      })
+      .reduce((total, value) => {
+        return total + parseInt(value);
+      }, 0);
+  }
+
+  const removeItem = (id) => {
+    // const filtered = cart.filter((item) => {
+    //   item.id !== id;
+    // });
+    // setCart(filtered);
+    let cartRef = remove(ref(dbR, 'cart/' + id));
+    return cartRef;
+  };
+  const checkOut = () => {
+    setTotal(totalvalue);
+    navigation.navigate('Checkout');
+  };
+
   return (
     <ScrollView>
       <View style={{ margin: 25 }}>
@@ -56,6 +75,7 @@ const MyCart = () => {
             console.log(item.id);
             const { id, title, imageUrl, price } = item;
 
+            LogBox.ignoreAllLogs();
             return (
               <View key={index} style={styles.container}>
                 <Image source={{ uri: `${imageUrl}` }} style={styles.image} />
@@ -73,7 +93,7 @@ const MyCart = () => {
                   </Pressable>
                 </View> */}
                 <Text style={{ flexDirection: 'row', alignSelf: 'center' }}>
-                  {price}
+                  ${price}
                 </Text>
                 <Pressable
                   style={{ alignSelf: 'flex-end', marginRight: 15 }}
@@ -85,8 +105,13 @@ const MyCart = () => {
             );
           })
         )}
-        <Text>Total : {totalvalue}</Text>
+        <Text>Total : ${totalvalue}</Text>
       </View>
+      {!empty ? (
+        <Button style={styles.button} title="check out" onPress={checkOut} />
+      ) : (
+        <Button style={styles.button} title="check out" disabled={true} />
+      )}
     </ScrollView>
   );
 };
@@ -114,6 +139,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignSelf: 'center',
     flex: 1,
+  },
+  button: {
+    width: '80%',
   },
 });
 export default MyCart;

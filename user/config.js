@@ -2,6 +2,7 @@ import * as firebase from 'firebase/compat';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getDatabase } from 'firebase/database';
 // import 'firebase/firestore';
 // import 'firebase/storage';
 export const firebaseConfig = {
@@ -21,6 +22,7 @@ if (firebase.apps.length === 0) {
   app = firebase.app();
 }
 export const db = getFirestore(app);
+export const dbR = getDatabase(app);
 export const auth = getAuth(app);
 export function signup(email, password) {
   createUserWithEmailAndPassword(auth, email, password);

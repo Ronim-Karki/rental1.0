@@ -99,7 +99,8 @@ const SignUp = ({ navigation }) => {
     lastName,
     userName,
     email,
-    phone
+    phone,
+    password
   ) => {
     try {
       const response = await fetch(
@@ -115,7 +116,9 @@ const SignUp = ({ navigation }) => {
             lastName: lastName,
             userName: userName,
             email: email,
+
             phone: phone,
+            password: password,
           }),
         }
       );
@@ -136,7 +139,15 @@ const SignUp = ({ navigation }) => {
       .then((re) => {
         console.log(re);
 
-        createUsers(re.user.uid, firstName, lastName, userName, email, phone);
+        createUsers(
+          re.user.uid,
+          firstName,
+          lastName,
+          userName,
+          email,
+          phone,
+          password
+        );
         navigation.navigate('Home');
 
         setSigned(true);
